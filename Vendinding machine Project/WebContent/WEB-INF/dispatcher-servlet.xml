@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<property name="configLocation"
+			value="classpath:hibernate.cfg.xml">
+		</property>
+	</bean>
+	
+	     <!-- add hibernate using hibernatetemplate -->
+	     
+	     
+	<bean id="ht" class="org.springframework.orm.hibernate3.HibernateTemplate">
+	  <!-- add the sessionfactory object to hibernate template -->
+	   <property name="sessionFactory">
+	    <ref bean="sessionFactory"/>
+	   </property>
+	</bean>
+	
+	            <!-- dao -->
+	            
+	
+	<!-- ************************* moaddi projects******************************************* -->
+
+	
+	<bean id="lockDAO" class="com.cis.dao.impl.LockDAOImpl">
+	  <!-- userdaoimpl contain colnstructorarg and assaining the hibernate template so we configure this place -->
+	<constructor-arg>
+	<ref bean="ht"/>
+	</constructor-arg>
+	</bean>
+		
+	<!-- ************************* moaddi projects******************************************* -->
+	
+	
+		<bean id="lockService" class="com.cis.service.impl.LockServiceImp">
+		<constructor-arg>
+			<ref bean="lockDAO"/>
+		</constructor-arg>
+	</bean>
+	
+		      <!-- viewResolver -->
+		
+	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="viewClass">
+			<value>org.springframework.web.servlet.view.JstlView</value>
+		</property>
+		<property name="prefix">
+			<value>/</value>
+		</property>
+		<property name="suffix">
+			<value>.jsp</value>
+		</property>
+		
+	</bean>
+	<!--  for tiles  -->
+	
+	<bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<property name="mappings">
+			<props>
+									
+				<!-- ************************* moaddi projects******************************************* -->
+			
+			<prop key="/insertlock.htm">
+				addLockFormController
+				</prop>
+					<prop key="/locklist.htm">
+				lockListController
+				</prop>
+				
+				<prop key="/dellock.htm">
+				deleteLockController
+				</prop>
+				
+				 <prop key="/editlock.htm">
+				editLockFormController
+				</prop> 
+			 
+				<!-- Agency Control  -->
+	
+				<!-- Supplier Control -->
+				
+				<!-- Item                 -->
+			
+			 </props>
+			 
+		</property>
+	</bean>
+	
+	
+	     
+	
+	<!-- ************************* moaddi projects******************************************* -->
+	
+	
+	
+	<!-- lock controller -->
+	
+	<bean class="com.cis.ui.controllers.AddLockFormController" id="addLockFormController">
+		<property name="formView">
+			<value>insertlock</value>
+		</property>
+		<property name="commandName">
+			<value>addLock</value>
+		</property>
+		<property name="commandClass">
+			<value>com.cis.ui.controllers.LockForm</value>
+		</property>
+		<property name="lockService"><ref bean="lockService"/></property>
+	</bean>
+	
+	
+	<bean class="com.cis.ui.controllers.DeleteLockController" id="deleteLockController">
+		<property name="lockDAO">
+			<ref bean="lockDAO"/>
+		</property>
+	</bean>
+		 <bean class="com.cis.ui.controllers.EditLockFormController" id="editLockFormController">
+		<property name="formView">
+			<value>editlock</value>
+		</property>
+		<property name="commandName">
+			<value>editLock</value>
+		</property>
+		<property name="commandClass">
+			<value>com.cis.ui.controllers.LockForm</value>
+		</property>
+		<constructor-arg><ref bean="lockService"></ref></constructor-arg>
+	</bean> 
+	<!--                 Supplier Controls                      -->
+		
+	
+	<!-- list data for lock -->
+	
+	<bean class="com.cis.ui.controllers.LockListController" id="lockListController">
+		 <property name="lockService">
+			<ref bean="lockService"/>
+		</property>
+	</bean>
+	<!-- list data for Supplier -->
+
+  
+	<!-- list for custmer  -->
+
+	
+	</beans>
